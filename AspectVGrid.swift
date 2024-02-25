@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-// here we create the custom AspectVGrid that we want
-struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiable {
+// here we create the custom AspectVGrid that we want with two Generic arguments we do not care but at least they should conform to Identifiable and View protocol -> it's the same when we define "struct MemoryGame <CardContent> where CardContent: Equatable" here we have a Generic typ of CardContent that should conform to "Equatable" protocol
+struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     // first we need to declare the arguments for the View combiner we have used in our View "EmojiMemoryGameView"
     // the type of the variable item is an array of generic types, we do not care what type it is so we create a new type for it. the type needs to be set during declaration
     var items: [Item]

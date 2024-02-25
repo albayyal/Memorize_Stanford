@@ -19,13 +19,23 @@ struct EmojiMemoryGameView: View {
                 .font(.largeTitle)
             
             gameBody
-            shuffle
+            HStack{
+                Text("Score: \(game.score)")
+                    .animation(nil)
+                Spacer()
+                shuffle
+            }
             .padding()
-           
-            HStack(spacing: 100){
-                ThemeButton(themeType: "car.fill", themePosition: 0)
-                ThemeButton(themeType: "display", themePosition: 1)
-                ThemeButton(themeType: "pawprint.fill", themePosition: 2)
+            
+            HStack(spacing: 100) {
+                ForEach (["car.fill", "display", "pawprint.fill"], id: \.self) { theme in
+                    Button {
+                        game.selectTheme(theme)
+                    } label: {
+                        Image(systemName: theme)
+                    }
+                    .font(.title)
+                }
             }
         }
     }
@@ -59,54 +69,7 @@ struct EmojiMemoryGameView: View {
             }
         }
     }
-    
 }
-
-struct CardView: View {
-    let card: EmojiMemoryGame.Card
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Pie(startAngel: Angle(degrees: 0-90), endAngel: Angle(degrees: 120-90))
-                    .padding(DrawingConstants.circlePadding).opacity(DrawingConstants.circleOpacity)
-                Text(card.content)
-                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
-                    .animation(.linear(duration: 1).repeatForever(autoreverses: false))
-                    // font is not animatable so there will be some unexpected behavior for the animation to avoid this we can use a fixed size for the font so that the font size is not effecting the animation and use the .scaleEffect modifier to shrink the size down. scaleEffect is a geometry effect and it does not affect the animation
-                    .font(font(in: geometry.size))
-            }
-            .cardify(isFaceUp: card.isFaceUp)
-        }
-    }
-    
-    // to shorten the code we set up a function for the font size
-    private func font (in size: CGSize) -> Font {
-        Font.system(size: min(size.width, size.height) * DrawingConstants.fontScale)
-    }
-    
-    // it's always better to give names to constants so everybody knows the purpose of the constants
-    private struct DrawingConstants {
-        static let fontScale: CGFloat = 0.7
-        static let circlePadding: CGFloat = 5
-        static let circleOpacity: CGFloat = 0.5
-    }
-}
-
-struct ThemeButton: View {
-    let themeType: String
-    let themePosition: Int
-    
-    var body: some View {
-        Button {
-           
-        } label: {
-            Image(systemName: themeType)
-        }
-        .font(.largeTitle)
-    }
-}
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

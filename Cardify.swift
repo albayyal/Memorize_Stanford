@@ -27,15 +27,15 @@ struct Cardify: AnimatableModifier {
     // the View Protocol require a variable body, but the ViewModifier require a function body with a generic as argument
     func body(content: Content) -> some View {
         ZStack {
-            let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
+            let base = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
             if rotation < 90 {
-                shape.fill(.white)
-                shape.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                base.strokeBorder(lineWidth: DrawingConstants.lineWidth)
+                    .background(base.fill(.white))
             } else {
-                shape.fill()
+                base.fill()
             }
             // here we modify any content which is passed to this struct
-            // to use animation the content has to be from start on the screen therefore it is outside the if-condition so it is always on screen, to hide it from the user we used the modifier .opacity and set up the  short hand if statement
+            // to use animation the content has to be from start on the screen therefore it is outside the if-condition so it is always on screen, to hide it from the user we used the modifier .opacity and set up the short hand if statement
             content.opacity(rotation < 90 ? 1 : 0)
         }
         .rotation3DEffect(Angle.degrees(rotation), axis: (0, 1, 0))
@@ -50,10 +50,10 @@ struct Cardify: AnimatableModifier {
     }
 }
 
-// with the struct on top we call our own modifier this way ".modifier(Cardify(isFaceUp: card.isFaceUp))" on any View
-// to simple the code for calling our modifier (like all System SwiftUI ViewModifier) we add an extension to it
+// with the struct on top we generate our own modifier this way ".modifier(Cardify(isFaceUp: card.isFaceUp))" on any View
+// to simple the code for calling our modifier (like all System SwiftUI ViewModifier) we add an extension so it can be used to any View
 extension View {
     func cardify(isFaceUp: Bool) -> some View {
-        self.modifier(Cardify(isFaceUp: isFaceUp))
+        modifier(Cardify(isFaceUp: isFaceUp))
     }
 }
